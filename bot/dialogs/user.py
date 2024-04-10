@@ -32,8 +32,8 @@ def test_buttons_creator(btn_quantity):
                 Const(item),
                 id=f"{i}",
                 on_click=go_next
-                )
             )
+        )
     return buttons
 
 
@@ -63,6 +63,11 @@ service_category_dialog = Dialog(
     ),
     Window(
         Const(text='Выберите сервис:'),
+        Button(
+            Const("Вернуться"),
+            id="back_to_category",
+            on_click=go_back
+        ),
         ScrollingGroup(
             *test_buttons_creator(get_services()),
             id="service",
