@@ -41,7 +41,17 @@ def category_buttons_creator(btn_quantity):
 
 
 async def get_data(dialog_manager: DialogManager, **kwargs):
-    return {'services': get_services()[int(dialog_manager.dialog_data.get("callback_data"))]}
+    category_id = int(dialog_manager.dialog_data.get("callback_data"))
+    return {
+        'category': get_categories()[category_id],
+        'services': get_services()[category_id]
+    }
+
+
+async def category_selection(
+        callback: CallbackQuery, button: Button, manager: DialogManager
+):
+    await callback.message.answer("Кажется, ты нажал на кнопку!")
 
 
 # Это стартовый диалог
@@ -62,7 +72,7 @@ start_dialog = Dialog(
 
 service_category_dialog = Dialog(
     Window(
-        Const(text="Выберите категорию:"),
+        Const("Выберите категорию:"),
         ScrollingGroup(
             *category_buttons_creator(get_categories()),
             id="category",
@@ -72,7 +82,7 @@ service_category_dialog = Dialog(
         state=ServiceCategoryDialogSG.category,
     ),
     Window(
-        Const(text="Выберите сервис:"),
+        Format("<b>Категория</b> - <i>{category}</i>\nВыберите сервис:"),
         Button(Const("Вернуться"), id="back_to_category", on_click=go_back),
         ScrollingGroup(
             Select(
@@ -80,7 +90,7 @@ service_category_dialog = Dialog(
                 id='categ',
                 item_id_getter=lambda x: x[1],
                 items='services',
-                #on_click=category_selection,
+                on_click=category_selection,
             ),
             id="service",
             width=1,
@@ -89,4 +99,9 @@ service_category_dialog = Dialog(
         state=ServiceCategoryDialogSG.service,
         getter=get_data,
     ),
+    Window(
+        Format(''),
+        Button(Const("Вернуться"), id="back_to_category", on_click=go_back),
+        state=None
+    )
 )

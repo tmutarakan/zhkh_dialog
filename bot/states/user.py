@@ -8,3 +8,10 @@ class StartSG(StatesGroup):
 class ServiceCategoryDialogSG(StatesGroup):
     category = State()
     service = State()
+    street = State()
+    house = State()
+    flat = State()
+    personal_account = State()
+    name = State()
+    phone = State()
+    text = State()
