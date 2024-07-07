@@ -1,4 +1,4 @@
-#import logging
+import logging
 import asyncio
 
 from aiogram import Bot, Dispatcher
@@ -13,7 +13,7 @@ from bot.dialogs.user import start_dialog, service_category_dialog
 
 
 async def main():
-    """# Инициализируем логгер
+    # Инициализируем логгер
     logger = logging.getLogger(__name__)
     # Конфигурируем логирование
     logging.basicConfig(
@@ -24,7 +24,7 @@ async def main():
     )
 
     # Выводим в консоль информацию о начале запуска бота
-    logger.info('Starting bot')"""
+    logger.info('Starting bot')
 
     # Загружаем конфиг в переменную config
     config = load_config("bot/.env")

@@ -11,7 +11,7 @@ class ServiceCategoryDialogSG(StatesGroup):
     street = State()
     house = State()
     flat = State()
-    personal_account = State()
     name = State()
     phone = State()
     text = State()
+    personal_account = State()
