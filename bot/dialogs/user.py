@@ -1,10 +1,11 @@
 from pprint import pprint
 
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
 from aiogram_dialog import Dialog, Window, DialogManager
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.kbd import Button, ScrollingGroup, Select
+from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 
 from bot.states.user import StartSG, ServiceCategoryDialogSG
 from bot.data import get_categories, get_services
@@ -73,6 +74,30 @@ async def username_getter(dialog_manager: DialogManager, **kwargs):
     return dialog_manager.dialog_data.get("my_dialog_data")
 
 
+def street_check(text: str):
+    return text
+
+
+# Хэндлер, который сработает, если пользователь ввел корректный возраст
+async def correct_street_handler(
+        message: Message, 
+        widget: ManagedTextInput, 
+        dialog_manager: DialogManager, 
+        text: str) -> None:  
+    await message.answer(text=f'Вам {text}')
+
+
+# Хэндлер, который сработает на ввод некорректного возраста
+async def error_street_handler(
+        message: Message, 
+        widget: ManagedTextInput, 
+        dialog_manager: DialogManager, 
+        error: ValueError):
+    await message.answer(
+        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+    )
+
+
 # Это стартовый диалог
 start_dialog = Dialog(
     Window(
@@ -102,7 +127,7 @@ service_category_dialog = Dialog(
     ),
     Window(
         Format("<b>Категория</b> - <i>{category}</i>"),
-        Const("Выберите сервис:"),
+        Const("\nВыберите сервис:"),
         Button(Const("Вернуться"), id="back_to_category", on_click=go_back),
         ScrollingGroup(
             Select(
@@ -122,9 +147,14 @@ service_category_dialog = Dialog(
     Window(
         Format("<b>Категория</b> - <i>{category}</i>"),
         Format("<b>Сервис</b> - <i>{service}</i>"),
-        Const("\n"),
-        Const("Введите название улицы"),
+        Const("\nВведите название улицы"),
         Button(Const("Вернуться"), id="back_to_service", on_click=go_back),
+        TextInput(
+            id='street_input',
+            type_factory=street_check,
+            on_success=correct_street_handler,
+            on_error=error_street_handler,
+        ),
         state=ServiceCategoryDialogSG.street,
         getter=username_getter
     ),
