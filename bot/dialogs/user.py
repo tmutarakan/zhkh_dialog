@@ -1,37 +1,14 @@
-from aiogram.types import CallbackQuery
-
-from aiogram_dialog import Dialog, Window, DialogManager
+from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.kbd import Button, ScrollingGroup, Select
-from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
+from aiogram_dialog.widgets.input import TextInput
 
-from bot.states.user import StartSG, ServiceCategoryDialogSG
+from bot.states.user import ServiceCategoryDialogSG
 from bot.data import get_categories
 from bot.dialogs import utils
 
 
-async def start_service_category(
-    callback: CallbackQuery, button: Button, dialog_manager: DialogManager
-) -> None:
-    data = {
-        'category_id': None,
-        'category': None,
-        'services': None,
-        'service_id': None,
-        'service': None,
-        'street': None,
-        'house': None,
-        'flat': None,
-        'name': None,
-        'phone': None,
-        'text': None,
-        'personal_account': None
-    }
-    await dialog_manager.start(state=ServiceCategoryDialogSG.category, data=data)
-
-
-# Это стартовый диалог
-start_dialog = Dialog(
+main_dialog = Dialog(
     Window(
         Const(
             "📱Для того чтобы отправить заявку, выберите категорию и следуйте указаниям бота."
@@ -39,14 +16,10 @@ start_dialog = Dialog(
         Button(
             text=Const("Оставить заявку"),
             id="button_submit_application",
-            on_click=start_service_category,
+            on_click=utils.go_next,
         ),
-        state=StartSG.start,
+        state=ServiceCategoryDialogSG.start,
     ),
-)
-
-
-service_category_dialog = Dialog(
     Window(
         Const("Выберите категорию:"),
         ScrollingGroup(
@@ -206,15 +179,8 @@ service_category_dialog = Dialog(
         Format("<b>Описание</b> - <i>{text}</i>"),
         Format("<b>Лицевой счёт</b> - <i>{personal_account}</i>"),
         Button(Const("Вернуться"), id="back_to_personal_account", on_click=utils.go_back),
-        Button(Const("Отправить заявку"), id="submit_application", on_click=utils.go_next),
+        Button(Const("Отправить заявку"), id="submit_application", on_click=utils.sent_application),
         state=ServiceCategoryDialogSG.application_form,
-        getter=utils.data_getter
-    ),
-    Window(
-        Const("<b>Заявка принята.</b>"),
-        Format("<b>Номер заявки</b> - <i>{category}</i>"),
-        Format("<b>Наименование Управляющей компании</b> - <i>{service}</i>"),
-        state=ServiceCategoryDialogSG.application_sent,
         getter=utils.data_getter
     ),
 )

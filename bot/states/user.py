@@ -1,11 +1,8 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class StartSG(StatesGroup):
-    start = State()
-
-
 class ServiceCategoryDialogSG(StatesGroup):
+    start = State()
     category = State()
     service = State()
     street = State()
@@ -16,4 +13,3 @@ class ServiceCategoryDialogSG(StatesGroup):
     text = State()
     personal_account = State()
     application_form = State()
-    application_sent = State()

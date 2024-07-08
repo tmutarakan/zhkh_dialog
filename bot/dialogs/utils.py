@@ -245,3 +245,15 @@ async def error_personal_account_handler(
     await message.answer(
         text='Вы ввели некорректный возраст. Попробуйте еще раз'
     )
+
+
+async def sent_application(callback: CallbackQuery, button: Button, dialog_manager: DialogManager
+) -> None:
+    data: dict = dialog_manager.start_data
+    await callback.message.answer(
+        text=
+        "<b>Заявка принята.</b>\n"
+        f"<b>Номер заявки</b> - <i>{data['category']}</i>\n"
+        f"<b>Наименование Управляющей компании</b> - <i>{data['service']}</i>"
+    )
+    await dialog_manager.done()

@@ -9,8 +9,7 @@ from aiogram_dialog import setup_dialogs
 
 from bot.config import load_config
 from bot.handlers.user import router
-from bot.dialogs.user import start_dialog, service_category_dialog
-
+from bot.dialogs.user import main_dialog
 
 async def main():
     # Инициализируем логгер
@@ -33,7 +32,7 @@ async def main():
     dp = Dispatcher()
 
 
-    dp.include_routers(router, start_dialog, service_category_dialog)
+    dp.include_routers(router, main_dialog)
     setup_dialogs(dp)
 
     await bot.delete_webhook(drop_pending_updates=True)
