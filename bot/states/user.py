@@ -15,3 +15,5 @@ class ServiceCategoryDialogSG(StatesGroup):
     phone = State()
     text = State()
     personal_account = State()
+    application_form = State()
+    application_sent = State()

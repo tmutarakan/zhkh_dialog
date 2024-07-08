@@ -12,5 +12,5 @@ router: Router = Router()
 
 # Этот классический хэндлер будет срабатывать на команду /start
 @router.message(CommandStart())
-async def command_start_process(message: Message, dialog_manager: DialogManager):
+async def command_start_process(message: Message, dialog_manager: DialogManager) -> None:
     await dialog_manager.start(state=StartSG.start, mode=StartMode.RESET_STACK)
