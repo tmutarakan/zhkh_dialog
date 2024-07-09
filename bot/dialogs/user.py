@@ -1,67 +1,26 @@
 from aiogram_dialog import Dialog, Window
 from aiogram_dialog.widgets.text import Const, Format
-from aiogram_dialog.widgets.kbd import Button, ScrollingGroup, Select
+from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.input import TextInput
 
 from bot.states.user import ServiceCategoryDialogSG
-from bot.data import get_categories
-from bot.dialogs import utils
+from bot.dialogs import utils, window
 
 
 main_dialog = Dialog(
-    Window(
-        Const(
-            "📱Для того чтобы отправить заявку, выберите категорию и следуйте указаниям бота."
-        ),
-        Button(
-            text=Const("Оставить заявку"),
-            id="button_submit_application",
-            on_click=utils.go_next,
-        ),
-        state=ServiceCategoryDialogSG.start,
-    ),
-    Window(
-        Const("Выберите категорию:"),
-        ScrollingGroup(
-            *utils.category_buttons_creator(get_categories()),
-            id="category",
-            width=1,
-            height=6,
-        ),
-        state=ServiceCategoryDialogSG.category,
-    ),
-    Window(
-        Format("<b>Категория</b> - <i>{category}</i>"),
-        Const("\nВыберите сервис:"),
-        Button(Const("Вернуться"), id="back_to_category", on_click=utils.go_back),
-        ScrollingGroup(
-            Select(
-                Format('{item[0]}'),
-                id='categ',
-                item_id_getter=lambda x: x[1],
-                items='services',
-                on_click=utils.service_selection,
-            ),
-            id="service",
-            width=1,
-            height=6,
-        ),
-        state=ServiceCategoryDialogSG.service,
-        getter=utils.data_getter,
-    ),
-    Window(
-        Format("<b>Категория</b> - <i>{category}</i>"),
-        Format("<b>Сервис</b> - <i>{service}</i>"),
-        Const("\nВведите название улицы"),
-        Button(Const("Вернуться"), id="back_to_service", on_click=utils.go_back),
-        TextInput(
-            id='street_input',
-            type_factory=utils.street_check,
-            on_success=utils.correct_street_handler,
-            on_error=utils.error_street_handler,
-        ),
+    window.start,
+    window.category,
+    window.service,
+    window.create_window(
         state=ServiceCategoryDialogSG.street,
-        getter=utils.data_getter
+        getter=utils.data_getter,
+        last_text="Введите название улицы",
+        button_text="Вернуться",
+        button_id="back_to_service",
+        input_id='street_input',
+        type_factory=utils.street_check,
+        on_success=utils.correct_street_handler,
+        on_error=utils.error_street_handler
     ),
     Window(
         Format("<b>Категория</b> - <i>{category}</i>"),

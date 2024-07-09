@@ -55,7 +55,20 @@ async def service_selection(
 
 
 async def data_getter(dialog_manager: DialogManager, **kwarg) -> dict:
-    return dialog_manager.start_data
+    data = dialog_manager.start_data
+    format_items = (
+        ("Категория", data["category"]),
+        ("Сервис", data["service"]),
+        ("Улица", data["street"]),
+        ("Дом", data["house"]),
+        ("Квартира", data["flat"]),
+        ("ФИО", data["name"]),
+        ("Телефон", data["phone"]),
+        ("Описание", data["text"]),
+        ("Лицевой счёт", data["personal_account"]),
+    )
+    data["format_items"] = format_items
+    return data
 
 
 def street_check(text: str) -> str:

@@ -14,18 +14,18 @@ router: Router = Router()
 @router.message(CommandStart())
 async def command_start_process(message: Message, dialog_manager: DialogManager) -> None:
     data = {
-        'category_id': None,
-        'category': None,
-        'services': None,
-        'service_id': None,
-        'service': None,
-        'street': None,
-        'house': None,
-        'flat': None,
-        'name': None,
-        'phone': None,
-        'text': None,
-        'personal_account': None
+        'category_id': '',
+        'category': '',
+        'services': '',
+        'service_id': '',
+        'service': '',
+        'street': '',
+        'house': '',
+        'flat': '',
+        'name': '',
+        'phone': '',
+        'text': '',
+        'personal_account': ''
     }
     await dialog_manager.start(
         state=ServiceCategoryDialogSG.start,
