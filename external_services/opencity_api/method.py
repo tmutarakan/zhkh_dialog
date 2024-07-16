@@ -35,8 +35,8 @@ class Base:
     apigate_url: str
     api_token: str
 
-    async def _get_response(self):
-        headers = {
+    async def _get_response(self) -> ClientResponse:
+        headers: dict[str, str] = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_token}"
         }

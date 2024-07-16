@@ -8,14 +8,15 @@ from aiogram_dialog.widgets.input import TextInput
 from bot.states.user import ServiceCategoryDialogSG
 from bot.data import get_categories
 from bot.dialogs import utils
+from lexicon.ru import Lexicon
 
 
 start = Window(
     Const(
-        "📱Для того чтобы отправить заявку, выберите категорию и следуйте указаниям бота."
+        Lexicon.helptext
     ),
     Button(
-        text=Const("Оставить заявку"),
+        text=Const(Lexicon.submit_application),
         id="button_submit_application",
         on_click=utils.go_next,
     ),
@@ -23,7 +24,7 @@ start = Window(
 )
 
 category = Window(
-    Const("Выберите категорию:"),
+    Const(Lexicon.select_a_category),
     ScrollingGroup(
         *utils.category_buttons_creator(get_categories()),
         id="category",
@@ -34,8 +35,8 @@ category = Window(
 )
 
 service = Window(
-    Const("Проблема:"),
-    Button(Const("Вернуться"), id="back_to_category", on_click=utils.go_back),
+    Const(Lexicon.select_a_service),
+    Button(Const(Lexicon.back), id="back_to_category", on_click=utils.go_back),
     ScrollingGroup(
         Select(
             Format('{item[0]}'),

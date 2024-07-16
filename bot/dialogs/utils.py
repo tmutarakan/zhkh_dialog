@@ -8,6 +8,7 @@ from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.input import ManagedTextInput
 
 from bot.data import get_categories, get_services
+from lexicon.ru import Lexicon
 
 
 async def go_back(
@@ -60,6 +61,23 @@ async def data_getter(dialog_manager: DialogManager, **kwarg) -> dict:
     return dialog_manager.start_data
 
 
+async def data_before_submit(dialog_manager: DialogManager, **kwarg) -> dict:
+    data: dict = dialog_manager.start_data
+    return {"items": (
+            (Lexicon.category, data["category"]),
+            (Lexicon.service, data["service"]),
+            (Lexicon.street, data["street"]),
+            (Lexicon.street, data["street"]),
+            (Lexicon.house, data["house"]),
+            (Lexicon.flat, data["flat"]),
+            (Lexicon.name, data["name"]),
+            (Lexicon.phone, data["phone"]),
+            (Lexicon.text, data["text"]),
+            (Lexicon.personal_account, data["personal_account"])
+        )
+    }
+
+
 def street_check(text: str) -> str:
     return text
 
@@ -81,7 +99,7 @@ async def error_street_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text=Lexicon.not_found_input_street
     )
 
 
@@ -106,7 +124,7 @@ async def error_house_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text=Lexicon.not_found_input_house
     )
 
 
@@ -131,7 +149,7 @@ async def error_flat_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text=Lexicon.not_found_input_flat
     )
 
 
@@ -158,7 +176,7 @@ async def error_name_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Длина ФИО превышает ограничение системы. Попробуйте еще раз'
+        text=Lexicon.error_input_name
     )
 
 
@@ -179,14 +197,13 @@ async def correct_phone_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_phone_handler(
         message: Message,
         widget: ManagedTextInput,
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный номер телефона. Попробуйте еще раз'
+        text=Lexicon.error_input_phone
     )
 
 
@@ -211,7 +228,7 @@ async def error_text_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text=Lexicon.error_input_text
     )
 
 
@@ -236,7 +253,7 @@ async def error_personal_account_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text=Lexicon.error_input_personal_account
     )
 
 
@@ -245,8 +262,8 @@ async def sent_application(callback: CallbackQuery, button: Button, dialog_manag
     data: dict = dialog_manager.start_data
     await callback.message.answer(
         text=
-        "<b>Заявка принята.</b>\n"
-        f"<b>Номер заявки</b> - <i>{data['category']}</i>\n"
-        f"<b>Наименование Управляющей компании</b> - <i>{data['service']}</i>"
+        f"<b>{Lexicon.accepted}</b>\n"
+        f"<b>{Lexicon.application_number}</b> - <i>{data['category']}</i>\n"
+        f"<b>{Lexicon.control_name}</b> - <i>{data['service']}</i>"
     )
     await dialog_manager.done()
