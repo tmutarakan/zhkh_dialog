@@ -7,7 +7,7 @@ from aiogram.enums import ParseMode
 
 from aiogram_dialog import setup_dialogs
 
-from bot.config import load_config
+from config_data.config import load_config
 from bot.handlers.user import router
 from bot.dialogs.user import main_dialog
 
@@ -26,7 +26,7 @@ async def main():
     logger.info('Starting bot')
 
     # Загружаем конфиг в переменную config
-    config = load_config("bot/.env")
+    config = load_config(".env")
 
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()

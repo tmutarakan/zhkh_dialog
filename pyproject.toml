@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 aiogram-dialog = "^2.1.0"
 environs = "^11.0.0"
+pydantic = "^2.8.2"
 
 
 [build-system]
