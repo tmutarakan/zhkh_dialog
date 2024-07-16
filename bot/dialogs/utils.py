@@ -1,3 +1,5 @@
+import re
+
 from aiogram.types import CallbackQuery, Message
 
 from aiogram_dialog import DialogManager
@@ -55,27 +57,13 @@ async def service_selection(
 
 
 async def data_getter(dialog_manager: DialogManager, **kwarg) -> dict:
-    data = dialog_manager.start_data
-    format_items = (
-        ("Категория", data["category"]),
-        ("Сервис", data["service"]),
-        ("Улица", data["street"]),
-        ("Дом", data["house"]),
-        ("Квартира", data["flat"]),
-        ("ФИО", data["name"]),
-        ("Телефон", data["phone"]),
-        ("Описание", data["text"]),
-        ("Лицевой счёт", data["personal_account"]),
-    )
-    data["format_items"] = format_items
-    return data
+    return dialog_manager.start_data
 
 
 def street_check(text: str) -> str:
     return text
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_street_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -87,7 +75,6 @@ async def correct_street_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_street_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -102,7 +89,6 @@ def house_check(text: str) -> str:
     return text
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_house_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -114,7 +100,6 @@ async def correct_house_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_house_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -129,7 +114,6 @@ def flat_check(text: str) -> str:
     return text
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_flat_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -141,7 +125,6 @@ async def correct_flat_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_flat_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -153,10 +136,11 @@ async def error_flat_handler(
 
 
 def name_check(text: str) -> str:
-    return text
+    if len(text) <= 128:
+        return text
+    raise ValueError
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_name_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -168,22 +152,22 @@ async def correct_name_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_name_handler(
         message: Message,
         widget: ManagedTextInput,
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text='Длина ФИО превышает ограничение системы. Попробуйте еще раз'
     )
 
 
 def phone_check(text: str) -> str:
-    return text
+    if re.fullmatch(r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$", text):
+        return text
+    raise ValueError
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_phone_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -202,7 +186,7 @@ async def error_phone_handler(
         dialog_manager: DialogManager,
         error: ValueError) -> None:
     await message.answer(
-        text='Вы ввели некорректный возраст. Попробуйте еще раз'
+        text='Вы ввели некорректный номер телефона. Попробуйте еще раз'
     )
 
 
@@ -210,7 +194,6 @@ def text_check(text: str) -> str:
     return text
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_text_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -222,7 +205,6 @@ async def correct_text_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_text_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -237,7 +219,6 @@ def personal_account_check(text: str) -> str:
     return text
 
 
-# Хэндлер, который сработает, если пользователь ввел корректный возраст
 async def correct_personal_account_handler(
         message: Message,
         widget: ManagedTextInput,
@@ -249,7 +230,6 @@ async def correct_personal_account_handler(
     await dialog_manager.next()
 
 
-# Хэндлер, который сработает на ввод некорректного возраста
 async def error_personal_account_handler(
         message: Message,
         widget: ManagedTextInput,

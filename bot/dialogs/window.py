@@ -34,11 +34,7 @@ category = Window(
 )
 
 service = Window(
-    List(
-        field=Format('<b>{item[0]}</b> - <i>{item[1]}</i>'),
-        items='format_items'
-    ),
-    Const("\nВыберите сервис:"),
+    Const("Проблема:"),
     Button(Const("Вернуться"), id="back_to_category", on_click=utils.go_back),
     ScrollingGroup(
         Select(

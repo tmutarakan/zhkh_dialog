@@ -16,7 +16,7 @@ async def main():
     logger = logging.getLogger(__name__)
     # Конфигурируем логирование
     logging.basicConfig(
-        filename="tbot.log",
+        #filename="tbot.log",
         level=logging.INFO,
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
         '[%(asctime)s] - %(name)s - %(message)s'
