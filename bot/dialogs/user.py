@@ -16,9 +16,8 @@ main_dialog = Dialog(
         Const(Lexicon.input_street),
         TextInput(
             id='street_input',
-            type_factory=utils.street_check,
+            type_factory=utils.address_check,
             on_success=utils.correct_street_handler,
-            on_error=utils.error_street_handler
         ),
         state=ServiceCategoryDialogSG.street
     ),
@@ -26,9 +25,8 @@ main_dialog = Dialog(
         Const(Lexicon.input_house),
         TextInput(
             id='house_input',
-            type_factory=utils.house_check,
+            type_factory=utils.address_check,
             on_success=utils.correct_house_handler,
-            on_error=utils.error_house_handler
         ),
         state=ServiceCategoryDialogSG.house
     ),
@@ -36,9 +34,8 @@ main_dialog = Dialog(
         Const(Lexicon.input_flat),
         TextInput(
             id='flat_input',
-            type_factory=utils.flat_check,
+            type_factory=utils.address_check,
             on_success=utils.correct_flat_handler,
-            on_error=utils.error_flat_handler
         ),
         state=ServiceCategoryDialogSG.flat
     ),

@@ -9,6 +9,12 @@ from aiogram_dialog.widgets.input import ManagedTextInput
 
 from bot.data import get_categories, get_services
 from lexicon.ru import Lexicon
+from external_services.opencity_api import model
+from external_services.opencity_api.method import create_token, Search
+from config_data.config import Config, load_config
+
+
+config: Config = load_config(".env")
 
 
 async def go_back(
@@ -48,7 +54,7 @@ async def service_selection(
 ) -> None:
     data: dict = dialog_manager.start_data
     service_id = int(callback.data.split(':')[-1])
-    data['service_id'] = service_id
+    data['service_code'] = service_id
     for elem in data['services']:
         if elem[1] == service_id:
             data['service'] = elem[0]
@@ -67,7 +73,6 @@ async def data_before_submit(dialog_manager: DialogManager, **kwarg) -> dict:
             (Lexicon.category, data["category"]),
             (Lexicon.service, data["service"]),
             (Lexicon.street, data["street"]),
-            (Lexicon.street, data["street"]),
             (Lexicon.house, data["house"]),
             (Lexicon.flat, data["flat"]),
             (Lexicon.name, data["name"]),
@@ -78,8 +83,19 @@ async def data_before_submit(dialog_manager: DialogManager, **kwarg) -> dict:
     }
 
 
-def street_check(text: str) -> str:
+def address_check(text: str) -> str:
     return text
+
+
+async def _get_token() -> str:
+    response = model.CreateTokenReturn(
+        **await create_token(
+            authentication_url=config.api_opencity.authentication_url,
+            login=config.api_opencity.login,
+            password=config.api_opencity.password
+        )
+    )
+    return response.result.token
 
 
 async def correct_street_handler(
@@ -87,24 +103,20 @@ async def correct_street_handler(
         widget: ManagedTextInput,
         dialog_manager: DialogManager,
         text: str) -> None:
-    data: dict = dialog_manager.start_data
-    data['street'] = text
-    dialog_manager.start_data.update(data)
-    await dialog_manager.next()
-
-
-async def error_street_handler(
-        message: Message,
-        widget: ManagedTextInput,
-        dialog_manager: DialogManager,
-        error: ValueError) -> None:
-    await message.answer(
-        text=Lexicon.not_found_input_street
-    )
-
-
-def house_check(text: str) -> str:
-    return text
+    search = Search(
+        apigate_url=config.api_opencity.apigate_url,
+        api_token=await _get_token(),
+        street=text)
+    response = model.SearchStreetReturn(**await search.search_street())
+    if response.result.items:
+        data: dict = dialog_manager.start_data
+        data['street'] = text
+        dialog_manager.start_data.update(data)
+        await dialog_manager.next()
+    else:
+        await message.answer(
+            text=Lexicon.not_found_input_street
+        )
 
 
 async def correct_house_handler(
@@ -113,23 +125,20 @@ async def correct_house_handler(
         dialog_manager: DialogManager,
         text: str) -> None:
     data: dict = dialog_manager.start_data
-    data['house'] = text
-    dialog_manager.start_data.update(data)
-    await dialog_manager.next()
-
-
-async def error_house_handler(
-        message: Message,
-        widget: ManagedTextInput,
-        dialog_manager: DialogManager,
-        error: ValueError) -> None:
-    await message.answer(
-        text=Lexicon.not_found_input_house
-    )
-
-
-def flat_check(text: str) -> str:
-    return text
+    search = Search(
+        apigate_url=config.api_opencity.apigate_url,
+        api_token=await _get_token(),
+        street=data['street'],
+        house_number=text)
+    response = model.SearchStreetReturn(**await search.search_street())
+    if response.result.items:
+        data['house'] = text
+        dialog_manager.start_data.update(data)
+        await dialog_manager.next()
+    else:
+        await message.answer(
+            text=Lexicon.not_found_input_house
+        )
 
 
 async def correct_flat_handler(
@@ -138,19 +147,21 @@ async def correct_flat_handler(
         dialog_manager: DialogManager,
         text: str) -> None:
     data: dict = dialog_manager.start_data
-    data['flat'] = text
-    dialog_manager.start_data.update(data)
-    await dialog_manager.next()
-
-
-async def error_flat_handler(
-        message: Message,
-        widget: ManagedTextInput,
-        dialog_manager: DialogManager,
-        error: ValueError) -> None:
-    await message.answer(
-        text=Lexicon.not_found_input_flat
-    )
+    search = Search(
+        apigate_url=config.api_opencity.apigate_url,
+        api_token=await _get_token(),
+        street=data['street'],
+        house_number=data['house'],
+        flat_number=text)
+    response = model.SearchStreetReturn(**await search.search_street())
+    if response.result.items:
+        data['flat'] = text
+        dialog_manager.start_data.update(data)
+        await dialog_manager.next()
+    else:
+        await message.answer(
+            text=Lexicon.not_found_input_house
+        )
 
 
 def name_check(text: str) -> str:

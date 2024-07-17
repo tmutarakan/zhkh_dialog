@@ -1,11 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Callable, Optional
+from typing import Optional
 from uuid import uuid4
 
 from aiohttp import ClientResponse
-from pydantic_core._pydantic_core import ValidationError
-
-from config_data.config import Config
 
 from external_services.opencity_api import model
 from external_services.opencity_api.base import post_request
@@ -49,28 +46,8 @@ class Search(Base):
     street: str | None = None
     house_number: str | None = None
     flat_number: str | None = None
-    validation_model: model.BaseModel | None = None
-    current_method: Callable | None = None
-
-    async def check_validation(self, response, config: Config):
-        try:
-            response = self.validation_model(**response)
-        except ValidationError:
-            response = model.ErrorAPIResponse(**response)
-            if (response.error.message == 'JWT Token Expired' or
-                    response.error.message == 'Invalid JWT Token'):
-                response = model.CreateTokenReturn(**await create_token(
-                    authentication_url=config.api_opencity.authentication_url,
-                    login=config.api_opencity.login,
-                    password=config.api_opencity.password))
-                self.api_token = response.result.token
-                return self.validation_model(**await self.current_method())
-        else:
-            return response
 
     async def search_street(self):
-        self.validation_model = model.SearchStreetReturn
-        self.current_method = self.search_street
         self.request = model.SearchStreet(
             id=f"{uuid4()}",
             params=model.SearchStreetParams(
@@ -82,8 +59,6 @@ class Search(Base):
         return await self.get_response()
 
     async def search_house(self):
-        self.validation_model = model.SearchHouseReturn
-        self.current_method = self.search_house
         self.request = model.SearchHouse(
             id=f"{uuid4()}",
             params=model.SearchHouseParams(
@@ -96,8 +71,6 @@ class Search(Base):
         return await self.get_response()
 
     async def search_flat(self):
-        self.validation_model = model.SearchFlatReturn
-        self.current_method = self.search_flat
         self.request = model.SearchFlat(
             id=f"{uuid4()}",
             params=model.SearchFlatParams(

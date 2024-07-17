@@ -1,0 +1,15 @@
+{
+    "jsonrpc": "2.0",
+    "method": "opencity.flat.account.count",
+    "id": "231f6d6f-4eaf-4d0a-b9f9-bec962ccca2a",
+    "params": {
+        "filter": {
+            "flatId": {
+                "$eq":114718
+            },
+            "number": {
+                "$eq":"132"
+            }
+        }
+    }
+}

@@ -13,7 +13,7 @@ from bot.dialogs.user import main_dialog
 
 async def main():
     # Инициализируем логгер
-    logger = logging.getLogger(__name__)
+    """logger = logging.getLogger(__name__)
     # Конфигурируем логирование
     logging.basicConfig(
         #filename="tbot.log",
@@ -23,7 +23,8 @@ async def main():
     )
 
     # Выводим в консоль информацию о начале запуска бота
-    logger.info('Starting bot')
+    logger.info('Starting bot')"""
+    print('Starting bot')
 
     # Загружаем конфиг в переменную config
     config = load_config(".env")
