@@ -10,7 +10,7 @@ from aiogram_dialog.widgets.input import ManagedTextInput
 from bot.data import get_categories, get_services
 from lexicon.ru import Lexicon
 from external_services.opencity_api import model
-from external_services.opencity_api.method import create_token, Search
+from external_services.opencity_api.method import Check, create_token, Search
 from config_data.config import Config, load_config
 
 
@@ -130,7 +130,7 @@ async def correct_house_handler(
         api_token=await _get_token(),
         street=data['street'],
         house_number=text)
-    response = model.SearchStreetReturn(**await search.search_street())
+    response = model.SearchHouseReturn(**await search.search_house())
     if response.result.items:
         data['house'] = text
         dialog_manager.start_data.update(data)
@@ -153,14 +153,15 @@ async def correct_flat_handler(
         street=data['street'],
         house_number=data['house'],
         flat_number=text)
-    response = model.SearchStreetReturn(**await search.search_street())
+    response = model.SearchFlatReturn(**await search.search_flat())
     if response.result.items:
         data['flat'] = text
+        data['flat_id'] = response.result.items[0].id
         dialog_manager.start_data.update(data)
         await dialog_manager.next()
     else:
         await message.answer(
-            text=Lexicon.not_found_input_house
+            text=Lexicon.not_found_input_flat
         )
 
 
@@ -244,7 +245,9 @@ async def error_text_handler(
 
 
 def personal_account_check(text: str) -> str:
-    return text
+    if len(text)==10 and text.isdigit():
+        return text
+    raise ValueError
 
 
 async def correct_personal_account_handler(
@@ -253,9 +256,23 @@ async def correct_personal_account_handler(
         dialog_manager: DialogManager,
         text: str) -> None:
     data: dict = dialog_manager.start_data
-    data['personal_account'] = text
-    dialog_manager.start_data.update(data)
-    await dialog_manager.next()
+    check = Check(
+        apigate_url=config.api_opencity.apigate_url,
+        api_token=await _get_token(),
+        flat_id=data['flat_id'],
+        personal_account=text
+    )
+    response = await check.check_personal_account()
+    print(response)
+    response = model.CheckPersonalAccountReturn(**response)
+    if response.result:
+        data['personal_account'] = text
+        dialog_manager.start_data.update(data)
+        await dialog_manager.next()
+    else:
+        await message.answer(
+        text=Lexicon.error_personal_account
+    )
 
 
 async def error_personal_account_handler(

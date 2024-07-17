@@ -216,6 +216,29 @@ class SearchFlatReturn(BaseModel):
     id: UUID4
 
 
+# Проверка привязки лицевого счёта к адресу
+class CheckPersonalAccountFilter(BaseModel):
+    flatId: dict
+    number: dict
+
+
+class CheckPersonalAccountParams(BaseModel):
+    filter: CheckPersonalAccountFilter
+
+
+class CheckPersonalAccount(BaseModel):
+    jsonrpc: str = "2.0"
+    method: str = "opencity.flat.account.count"
+    id: UUID4
+    params: CheckPersonalAccountParams
+
+
+class CheckPersonalAccountReturn(BaseModel):
+    jsonrpc: str
+    result: int
+    id: UUID4
+
+
 # Создание заявки в ИС Открытый Нижнекамск (opencity.issue.create)
 class IssueCreateData(BaseModel):
     nameApplicant: str

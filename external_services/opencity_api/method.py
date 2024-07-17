@@ -40,6 +40,10 @@ class Base:
         data = self.request.model_dump()
         return await post_request(url=self.apigate_url, data=data, headers=headers)
 
+    async def get_response(self):
+        response: ClientResponse = await self._get_response()
+        return await response.json()
+
 
 @dataclass
 class Search(Base):
@@ -83,9 +87,23 @@ class Search(Base):
         )
         return await self.get_response()
 
-    async def get_response(self):
-        response: ClientResponse = await self._get_response()
-        return await response.json()
+
+@dataclass
+class Check(Base):
+    flat_id: str
+    personal_account: str
+
+    async def check_personal_account(self):
+        self.request = model.CheckPersonalAccount(
+            id=f"{uuid4()}",
+            params=model.CheckPersonalAccountParams(
+                filter=model.CheckPersonalAccountFilter(
+                    flatId={"$eq": self.flat_id},
+                    number={"$eq": self.personal_account}
+                )
+            )
+        )
+        return await self.get_response()
 
 
 @dataclass
@@ -120,7 +138,3 @@ class Issue(Base):
                 )
             )
         )
-
-    async def get_response(self):
-        response: ClientResponse = await self._get_response()
-        return await response.json()
