@@ -10,7 +10,7 @@ from aiogram_dialog.widgets.input import ManagedTextInput
 from bot.data import get_categories, get_services
 from lexicon.ru import Lexicon
 from external_services.opencity_api import model
-from external_services.opencity_api.method import Check, create_token, Search
+from external_services.opencity_api.method import Check, create_token, Search, Issue
 from config_data.config import Config, load_config
 
 
@@ -262,9 +262,7 @@ async def correct_personal_account_handler(
         flat_id=data['flat_id'],
         personal_account=text
     )
-    response = await check.check_personal_account()
-    print(response)
-    response = model.CheckPersonalAccountReturn(**response)
+    response = model.CheckPersonalAccountReturn(**await check.check_personal_account())
     if response.result:
         data['personal_account'] = text
         dialog_manager.start_data.update(data)
@@ -288,10 +286,25 @@ async def error_personal_account_handler(
 async def sent_application(callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     data: dict = dialog_manager.start_data
+    issue = Issue(
+        apigate_url=config.api_opencity.apigate_url,
+        api_token=await _get_token(),
+        fullname=data["name"],
+        personal_account=data["personal_account"],
+        service=data["service_code"],
+        text=data["text"],
+        building="-",
+        flat=data["flat"],
+        house=data["house"],
+        phone=data["phone"],
+        street=data["street"]
+    )
+    response = model.IssueCreateReturn(**await issue.create_request())
+    print(response)
     await callback.message.answer(
         text=
         f"<b>{Lexicon.accepted}</b>\n"
-        f"<b>{Lexicon.application_number}</b> - <i>{data['category']}</i>\n"
-        f"<b>{Lexicon.control_name}</b> - <i>{data['service']}</i>"
+        f"<b>{Lexicon.application_number}</b> - <i>{response.result.number}</i>\n"
+        f"<b>{Lexicon.control_name}</b> - <i>{response.result.provider[0].providerName}</i>"
     )
     await dialog_manager.done()

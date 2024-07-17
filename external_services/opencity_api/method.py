@@ -120,7 +120,7 @@ class Issue(Base):
     file_ids: list = field(default_factory=list)
     request: Optional[model.IssueCreate] = None
 
-    async def create_request(self) -> None:
+    async def create_request(self):
         self.request = model.IssueCreate(
             id=f"{uuid4()}",
             params=model.IssueCreateParams(
@@ -138,3 +138,4 @@ class Issue(Base):
                 )
             )
         )
+        return await self.get_response()
