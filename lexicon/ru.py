@@ -58,3 +58,4 @@ class Lexicon:
 class Commands:
     start: str = "Старт"
     help: str = "Помощь"
+    blackout: str = "Отключения"

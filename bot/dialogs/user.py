@@ -4,7 +4,7 @@ from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.input import TextInput
 
 from bot.states.user import BlackoutDialogSG, ServiceCategoryDialogSG
-from bot.dialogs import utils, window
+from bot.dialogs import utils, window, getter
 from lexicon.ru import Lexicon
 
 
@@ -83,7 +83,7 @@ main_dialog = Dialog(
         List(field=Format("<b>{item[0]}</b> - <i>{item[1]}</i>"), items="items"),
         Button(Const(Lexicon.sent_application), id="submit_application", on_click=utils.sent_application),
         state=ServiceCategoryDialogSG.application_form,
-        getter=utils.data_before_submit
+        getter=getter.data_before_submit
     ),
 )
 
@@ -109,7 +109,7 @@ blackout_dialog = Dialog(
     ),
     Window(
         Const("output"),
-        Button(Const("close"), id="close_blackout", on_click=utils.close_blackout),
-        state=BlackoutDialogSG.output
+        Button(Const("close"), id="close_blackout", on_click=utils.close_dialog),
+        state=BlackoutDialogSG.output,
     ),
 )

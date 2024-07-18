@@ -7,7 +7,7 @@ from aiogram_dialog.widgets.input import TextInput
 
 from bot.states.user import ServiceCategoryDialogSG
 from bot.data import get_categories
-from bot.dialogs import utils
+from bot.dialogs import utils, getter
 from lexicon.ru import Lexicon
 
 
@@ -19,11 +19,6 @@ start = Window(
         text=Const(Lexicon.submit_application),
         id="button_submit_application",
         on_click=utils.go_next,
-    ),
-    Button(
-        text=Const(Lexicon.start_blackout),
-        id="button_start_blackout",
-        on_click=utils.start_blackout,
     ),
     state=ServiceCategoryDialogSG.start,
 )
@@ -55,7 +50,7 @@ service = Window(
         height=6,
     ),
     state=ServiceCategoryDialogSG.service,
-    getter=utils.data_getter,
+    getter=getter.data_getter,
 )
 
 

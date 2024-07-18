@@ -322,3 +322,27 @@ class IssueCreateReturn(BaseModel):
     jsonrpc: str
     result: IssueCreateResultReturn
     id: UUID4
+
+
+# Отключения
+class BlackoutSort(BaseModel):
+    field: str
+    desc: str
+
+
+class BlackoutFilter(BaseModel):
+    houseId: dict
+
+
+class BlackoutParams(BaseModel):
+    filter: BlackoutFilter
+    limit: int = 20
+    offset: int = 0
+    sort: list[BlackoutSort]
+
+
+class Blackout(BaseModel):
+    jsonrpc: str = "2.0"
+    method: str = "opencity.interrupt.index"
+    id: UUID4
+    params: BlackoutParams

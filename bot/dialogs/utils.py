@@ -2,7 +2,7 @@ import re
 
 from aiogram.types import CallbackQuery, Message
 
-from aiogram_dialog import DialogManager, StartMode
+from aiogram_dialog import DialogManager
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.input import ManagedTextInput
@@ -28,6 +28,10 @@ async def go_next(
     callback: CallbackQuery, button: Button, dialog_manager: DialogManager
 ) -> None:
     await dialog_manager.next()
+
+
+async def close_dialog(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.done()
 
 
 async def category_selection(
@@ -62,26 +66,6 @@ async def service_selection(
             break
     dialog_manager.start_data.update(data)
     await dialog_manager.next()
-
-
-async def data_getter(dialog_manager: DialogManager, **kwarg) -> dict:
-    return dialog_manager.start_data
-
-
-async def data_before_submit(dialog_manager: DialogManager, **kwarg) -> dict:
-    data: dict = dialog_manager.start_data
-    return {"items": (
-            (Lexicon.category, data["category"]),
-            (Lexicon.service, data["service"]),
-            (Lexicon.street, data["street"]),
-            (Lexicon.house, data["house"]),
-            (Lexicon.flat, data["flat"]),
-            (Lexicon.name, data["name"]),
-            (Lexicon.phone, data["phone"]),
-            (Lexicon.text, data["text"]),
-            (Lexicon.personal_account, data["personal_account"])
-        )
-    }
 
 
 def address_check(text: str) -> str:
@@ -316,7 +300,3 @@ async def start_blackout(callback: CallbackQuery, button: Button, dialog_manager
         state=BlackoutDialogSG.street,
         data={}
     )
-
-
-async def close_blackout(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
-    await dialog_manager.done()

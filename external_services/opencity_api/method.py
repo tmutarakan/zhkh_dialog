@@ -139,3 +139,25 @@ class Issue(Base):
             )
         )
         return await self.get_response()
+
+
+@dataclass
+class Blackout(Base):
+    house_id: str
+
+    async def search(self):
+        self.request = model.Blackout(
+            id=f"{uuid4()}",
+            params=model.BlackoutParams(
+                filter=model.BlackoutFilter(
+                    houseId={"$eq": self.house_id}
+                ),
+                sort=[
+                    model.BlackoutSort(
+                        field="dateStart",
+                        desc="DESC"
+                    )
+                ]
+            )
+        )
+        return await self.get_response()
