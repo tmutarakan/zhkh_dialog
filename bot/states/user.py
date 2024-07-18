@@ -13,3 +13,9 @@ class ServiceCategoryDialogSG(StatesGroup):
     text = State()
     personal_account = State()
     application_form = State()
+
+
+class BlackoutDialogSG(StatesGroup):
+    street = State()
+    house = State()
+    output = State()

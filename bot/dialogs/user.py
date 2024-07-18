@@ -3,7 +3,7 @@ from aiogram_dialog.widgets.text import Const, Format, List
 from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.input import TextInput
 
-from bot.states.user import ServiceCategoryDialogSG
+from bot.states.user import BlackoutDialogSG, ServiceCategoryDialogSG
 from bot.dialogs import utils, window
 from lexicon.ru import Lexicon
 
@@ -30,7 +30,7 @@ main_dialog = Dialog(
         ),
         state=ServiceCategoryDialogSG.house
     ),
-    Window(
+        Window(
         Const(Lexicon.input_flat),
         TextInput(
             id='flat_input',
@@ -84,5 +84,32 @@ main_dialog = Dialog(
         Button(Const(Lexicon.sent_application), id="submit_application", on_click=utils.sent_application),
         state=ServiceCategoryDialogSG.application_form,
         getter=utils.data_before_submit
+    ),
+)
+
+
+blackout_dialog = Dialog(
+    Window(
+        Const(Lexicon.input_street),
+        TextInput(
+            id='street_input',
+            type_factory=utils.address_check,
+            on_success=utils.correct_street_handler,
+        ),
+        state=BlackoutDialogSG.street
+    ),
+    Window(
+        Const(Lexicon.input_house),
+        TextInput(
+            id='house_input',
+            type_factory=utils.address_check,
+            on_success=utils.correct_house_handler,
+        ),
+        state=BlackoutDialogSG.house
+    ),
+    Window(
+        Const("output"),
+        Button(Const("close"), id="close_blackout", on_click=utils.close_blackout),
+        state=BlackoutDialogSG.output
     ),
 )

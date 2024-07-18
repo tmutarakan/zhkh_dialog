@@ -2,12 +2,13 @@ import re
 
 from aiogram.types import CallbackQuery, Message
 
-from aiogram_dialog import DialogManager
+from aiogram_dialog import DialogManager, StartMode
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.input import ManagedTextInput
 
 from bot.data import get_categories, get_services
+from bot.states.user import BlackoutDialogSG
 from lexicon.ru import Lexicon
 from external_services.opencity_api import model
 from external_services.opencity_api.method import Check, create_token, Search, Issue
@@ -133,6 +134,7 @@ async def correct_house_handler(
     response = model.SearchHouseReturn(**await search.search_house())
     if response.result.items:
         data['house'] = text
+        data['house_id'] = response.result.items[0].id
         dialog_manager.start_data.update(data)
         await dialog_manager.next()
     else:
@@ -300,11 +302,21 @@ async def sent_application(callback: CallbackQuery, button: Button, dialog_manag
         street=data["street"]
     )
     response = model.IssueCreateReturn(**await issue.create_request())
-    print(response)
     await callback.message.answer(
         text=
         f"<b>{Lexicon.accepted}</b>\n"
         f"<b>{Lexicon.application_number}</b> - <i>{response.result.number}</i>\n"
         f"<b>{Lexicon.control_name}</b> - <i>{response.result.provider[0].providerName}</i>"
     )
+    await dialog_manager.done()
+
+
+async def start_blackout(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
+    await dialog_manager.start(
+        state=BlackoutDialogSG.street,
+        data={}
+    )
+
+
+async def close_blackout(callback: CallbackQuery, button: Button, dialog_manager: DialogManager):
     await dialog_manager.done()

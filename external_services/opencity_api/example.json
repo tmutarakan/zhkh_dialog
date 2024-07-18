@@ -1,15 +1,20 @@
 {
     "jsonrpc": "2.0",
-    "method": "opencity.flat.account.count",
-    "id": "231f6d6f-4eaf-4d0a-b9f9-bec962ccca2a",
+    "method": "opencity.interrupt.index",
+    "id": "9a6bdeb8-041c-4d6b-b247-e75edbcb6c55",
     "params": {
         "filter": {
-            "flatId": {
-                "$eq":114718
-            },
-            "number": {
-                "$eq":"132"
+            "houseId": {
+                "$eq": 334
             }
-        }
+        },
+        "limit": 20,
+        "offset": 0,
+        "sort": [
+            {
+                "field": "dateStart",
+                "desc": "DESC"
+            }
+        ]
     }
 }

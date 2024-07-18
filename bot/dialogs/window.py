@@ -20,6 +20,11 @@ start = Window(
         id="button_submit_application",
         on_click=utils.go_next,
     ),
+    Button(
+        text=Const(Lexicon.start_blackout),
+        id="button_start_blackout",
+        on_click=utils.start_blackout,
+    ),
     state=ServiceCategoryDialogSG.start,
 )
 
