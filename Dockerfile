@@ -15,5 +15,5 @@ FROM python:3.11-slim-bullseye as run-image
 COPY --from=compile-image /app/.venv /app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 WORKDIR /app
-COPY bot /app/bot
+COPY . /app/
 CMD ["python", "-m", "bot"]

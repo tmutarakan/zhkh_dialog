@@ -1,0 +1,9 @@
+.vscode
+venv
+.dockerignore
+.env.example
+.gitignore
+.pylintrc
+Dockerfile
+README.md
+tbot.log
